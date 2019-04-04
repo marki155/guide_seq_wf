@@ -1,4 +1,3 @@
-test2
 # guideseq: The GUIDE-Seq Analysis Package
 [![travis badge](https://travis-ci.org/aryeelab/guideseq.svg?branch=master)](https://travis-ci.org/aryeelab/guideseq)
 
