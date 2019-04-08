@@ -4,5 +4,5 @@ PyYAML>=5.1
 swalign==0.3.4
 nwalign==0.3.1
 pyfaidx==0.5.5.2
-svgwrite==1.1.6
+svgwrite==1.2.1
 regex
