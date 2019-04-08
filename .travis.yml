@@ -13,7 +13,7 @@ before_install:
   - PATH=`pwd`/bwa:$PATH
   - git clone https://github.com/arq5x/bedtools2.git
   - cd bedtools2
-  - git checkout tags/v2.25.0
+  - git checkout tags/v2.28.0
   - make
   - cd ..
   - PATH=`pwd`/bedtools2/bin:$PATH
