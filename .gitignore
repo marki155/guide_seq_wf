@@ -52,4 +52,7 @@ output/*.html
 output/*/index.html
 
 # Sphinx
-docs/_build
+idocs/_build
+
+# VSCode
+.vscode
