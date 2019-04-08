@@ -1,4 +1,4 @@
-numpy
+numpy==1.14.1
 HTSeq>=0.11.2
 PyYAML>=5.1
 swalign>=0.3.4
