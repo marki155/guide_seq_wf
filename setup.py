@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from distutils.core import setup
+from setuptools.setup import setup
 
 requirements = [line.strip() for line in open('requirements.txt')]
 
