@@ -10,10 +10,10 @@ import unittest
 import os
 import sys
 import shutil
-import utils
 
 # Include the parent directory in the PYTHONPATH for relative imports
 from guideseq.umi import demultiplex
+from guideseq.umi.test import utils
 
 sys.path.append('..')
 
