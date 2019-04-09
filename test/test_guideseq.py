@@ -12,9 +12,9 @@ import yaml
 import unittest
 import os
 import shutil
-import utils
 import numpy
 from guideseq import guideseq
+from test import utils
 
 TEST_SAMPLE_BARCODES = {'AGGCATGAGATCGC': 'mysample', 'GACTCCTGCGATAT': 'sample2'}
 TEST_UNDEMULTIPLEXED_FILES = {'forward': 'data/undemultiplexed/undemux.r1.fastq.gz',
