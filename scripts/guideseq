@@ -1,11 +1,6 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
 
-guideseq.py
-===========
-serves as the wrapper for all guideseq pipeline
-
-"""
 
 import os
 import sys
@@ -13,6 +8,12 @@ import yaml
 import argparse
 import traceback
 import logging
+
+from guideseq import validation, identifyOfftargetSites
+from guideseq.alignReads import alignReads
+from guideseq.filterBackgroundSites import filterBackgroundSites
+from guideseq.umi import demultiplex, umitag, consolidate
+from guideseq.visualization import visualizeOfftargets
 
 # Set up logger
 console = logging.StreamHandler()
@@ -22,12 +23,7 @@ LOG = logging.getLogger("GUIDE-Seq")
 LOG.addHandler(console)
 LOG.setLevel(logging.INFO)
 
-from alignReads import alignReads
-from filterBackgroundSites import filterBackgroundSites
-from umi import demultiplex, umitag, consolidate
-from visualization import visualizeOfftargets
-import identifyOfftargetSites
-import validation
+
 
 DEFAULT_DEMULTIPLEX_MIN_READS = 10000
 DEFAULT_WINDOW_SIZE = 25

@@ -22,7 +22,10 @@ install:
   - pip install -r requirements.txt && pip freeze
 
 script:
-  cd test && nosetests --exe -v
+  - cd test
+  - nosetests --exe -v
+  - cd .. && cd guideseq/umi/test
+  - nosetests --exe -v
 
 notifications:
   email:

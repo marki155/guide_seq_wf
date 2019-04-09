@@ -10,11 +10,12 @@ import unittest
 import os
 import sys
 import shutil
-import utils
 
 # Include the parent directory in the PYTHONPATH for relative imports
+from guideseq.umi import consolidate
+from guideseq.umi.test import utils
+
 sys.path.append('..')
-import consolidate
 
 TEST_OUTPUT_PATH = 'output'
 TEST_DATA_FILES = {'read1': 'data/umitagged/mysample.r1.umitagged.fastq',
