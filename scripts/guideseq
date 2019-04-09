@@ -13,6 +13,7 @@ import sys
 import yaml
 import argparse
 import traceback
+import logging
 
 # Set up logger
 console = logging.StreamHandler()
