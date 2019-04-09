@@ -15,8 +15,12 @@ import argparse
 import traceback
 
 # Set up logger
-import log
-logger = log.createCustomLogger('root')
+console = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+LOG = logging.getLogger("GUIDE-Seq")
+LOG.addHandler(console)
+LOG.setLevel(logging.INFO)
 
 from guideseq.alignReads import alignReads
 from guideseq.filterBackgroundSites import filterBackgroundSites
