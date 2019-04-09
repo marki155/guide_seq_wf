@@ -12,10 +12,15 @@ import sys
 import yaml
 import argparse
 import traceback
+import logging
 
 # Set up logger
-import log
-logger = log.createCustomLogger('root')
+console = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+LOG = logging.getLogger("GUIDE-Seq")
+LOG.addHandler(console)
+LOG.setLevel(logging.INFO)
 
 from alignReads import alignReads
 from filterBackgroundSites import filterBackgroundSites
