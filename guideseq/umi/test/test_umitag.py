@@ -13,8 +13,9 @@ import shutil
 import utils
 
 # Include the parent directory in the PYTHONPATH for relative imports
+from guideseq.umi import umitag
+
 sys.path.append('..')
-import umitag
 
 TEST_OUTPUT_PATH = 'output'
 TEST_DATA_FILES = {'read1': 'data/demultiplexed/mysample.r1.fastq',
