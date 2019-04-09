@@ -12,6 +12,7 @@ setup(
     author="based on work from Shengdar Q Tsai, Martin Aryee, Ved V Topkar, extended by Lukas Heumos",
     author_email='STSAI4@mgh.harvard.edu, Aryee.Martin@mgh.harvard.edu, vedtopkar@gmail.com, lukas.heumos@posteo.net',
     url='https://github.com/Zethson/guide_seq_wf',
+    include_package_data=True,
     scripts=['scripts/guideseq'],
     install_requires=requirements,
     license="AGPL",
