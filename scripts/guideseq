@@ -15,6 +15,12 @@ import argparse
 import traceback
 import logging
 
+from guideseq import validation, identifyOfftargetSites
+from guideseq.alignReads import alignReads
+from guideseq.filterBackgroundSites import filterBackgroundSites
+from guideseq.umi import demultiplex, umitag, consolidate
+from guideseq.visualization import visualizeOfftargets
+
 # Set up logger
 console = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -23,12 +29,7 @@ LOG = logging.getLogger("GUIDE-Seq")
 LOG.addHandler(console)
 LOG.setLevel(logging.INFO)
 
-from guideseq.alignReads import alignReads
-from guideseq.filterBackgroundSites import filterBackgroundSites
-from guideseq.umi import demultiplex, umitag, consolidate
-from guideseq.visualization import visualizeOfftargets
-import guideseq.identifyOfftargetSites
-import guideseq.validation
+
 
 DEFAULT_DEMULTIPLEX_MIN_READS = 10000
 DEFAULT_WINDOW_SIZE = 25
@@ -44,7 +45,7 @@ class GuideSeq:
         pass
 
     def parseManifest(self, manifest_path):
-        logger.info('Loading manifest...')
+        LOG.info('Loading manifest...')
 
         with open(manifest_path, 'r') as f:
             manifest_data = yaml.load(f)
@@ -61,7 +62,7 @@ class GuideSeq:
             self.samples = manifest_data['samples']
 
         except Exception as e:
-            logger.error('Incorrect or malformed manifest file. Please ensure your manifest contains all required fields.')
+            LOG.error('Incorrect or malformed manifest file. Please ensure your manifest contains all required fields.')
             sys.exit()
 
         # Allow the user to specify min reads for demultiplex if they want
@@ -88,10 +89,10 @@ class GuideSeq:
         if len(self.samples) < 2:
             raise AssertionError('Your manifest must have at least one control and one treatment sample.')
 
-        logger.info('Successfully loaded manifest.')
+        LOG.info('Successfully loaded manifest.')
 
     def parseManifestDemultiplex(self, manifest_path):
-        logger.info('Loading manifest for demultiplexing...')
+        LOG.info('Loading manifest for demultiplexing...')
 
         with open(manifest_path, 'r') as f:
             manifest_data = yaml.load(f)
@@ -102,7 +103,7 @@ class GuideSeq:
                 self.samples = manifest_data['samples']
 
             except Exception as e:
-                logger.error('Incomplete or incorrect manifest file. Please ensure your manifest contains all required fields.')
+                LOG.error('Incomplete or incorrect manifest file. Please ensure your manifest contains all required fields.')
                 quit()
 
         # Allow the user to specify min reads for demultiplex if they want
@@ -111,11 +112,11 @@ class GuideSeq:
         else:
             self.demultiplex_min_reads = DEFAULT_DEMULTIPLEX_MIN_READS
 
-        logger.info('Successfully loaded manifest for single-step demultiplexing.')
+        LOG.info('Successfully loaded manifest for single-step demultiplexing.')
 
     def demultiplex(self):
 
-        logger.info('Demultiplexing undemultiplexed files...')
+        LOG.info('Demultiplexing undemultiplexed files...')
 
         # Take our two barcodes and concatenate them
         swapped_sample_barcodes = {}
@@ -142,14 +143,14 @@ class GuideSeq:
                 self.demultiplexed[sample]['index1'] = os.path.join(self.output_folder, 'demultiplexed', sample + '.i1.fastq')
                 self.demultiplexed[sample]['index2'] = os.path.join(self.output_folder, 'demultiplexed', sample + '.i2.fastq')
 
-            logger.info('Successfully demultiplexed reads.')
+            LOG.info('Successfully demultiplexed reads.')
         except Exception as e:
-            logger.error('Error demultiplexing reads.')
-            logger.error(traceback.format_exc())
+            LOG.error('Error demultiplexing reads.')
+            LOG.error(traceback.format_exc())
             quit()
 
     def umitag(self):
-        logger.info('umitagging reads...')
+        LOG.info('umitagging reads...')
 
         try:
             self.umitagged = {}
@@ -166,14 +167,14 @@ class GuideSeq:
                               self.umitagged[sample]['read2'],
                               os.path.join(self.output_folder, 'umitagged'))
 
-            logger.info('Successfully umitagged reads.')
+            LOG.info('Successfully umitagged reads.')
         except Exception as e:
-            logger.error('Error umitagging')
-            logger.error(traceback.format_exc())
+            LOG.error('Error umitagging')
+            LOG.error(traceback.format_exc())
             quit()
 
     def consolidate(self, min_freq=CONSOLIDATE_MIN_FREQ, min_qual=CONSOLIDATE_MIN_QUAL):
-        logger.info('Consolidating reads...')
+        LOG.info('Consolidating reads...')
 
         try:
             self.consolidated = {}
@@ -186,14 +187,14 @@ class GuideSeq:
                 consolidate.consolidate(self.umitagged[sample]['read1'], self.consolidated[sample]['read1'], min_qual, min_freq)
                 consolidate.consolidate(self.umitagged[sample]['read2'], self.consolidated[sample]['read2'], min_qual, min_freq)
 
-            logger.info('Successfully consolidated reads.')
+            LOG.info('Successfully consolidated reads.')
         except Exception as e:
-            logger.error('Error umitagging')
-            logger.error(traceback.format_exc())
+            LOG.error('Error umitagging')
+            LOG.error(traceback.format_exc())
             quit()
 
     def alignReads(self):
-        logger.info('Aligning reads...')
+        LOG.info('Aligning reads...')
 
         try:
             self.aligned = {}
@@ -205,15 +206,15 @@ class GuideSeq:
                            self.consolidated[sample]['read2'],
                            sample_alignment_path)
                 self.aligned[sample] = sample_alignment_path
-                logger.info('Finished aligning reads to genome.')
+                LOG.info('Finished aligning reads to genome.')
 
         except Exception as e:
-            logger.error('Error aligning')
-            logger.error(traceback.format_exc())
+            LOG.error('Error aligning')
+            LOG.error(traceback.format_exc())
             quit()
 
     def identifyOfftargetSites(self):
-        logger.info('Identifying offtarget sites...')
+        LOG.info('Identifying offtarget sites...')
 
         try:
             self.identified = {}
@@ -239,15 +240,15 @@ class GuideSeq:
                 identifyOfftargetSites.analyze(samfile, self.reference_genome, self.identified[sample], annotations,
                                                self.search_radius, self.max_score)
 
-            logger.info('Finished identifying offtarget sites.')
+            LOG.info('Finished identifying offtarget sites.')
 
         except Exception as e:
-            logger.error('Error identifying offtarget sites.')
-            logger.error(traceback.format_exc())
+            LOG.error('Error identifying offtarget sites.')
+            LOG.error(traceback.format_exc())
             quit()
 
     def filterBackgroundSites(self):
-        logger.info('Filtering background sites')
+        LOG.info('Filtering background sites')
 
         try:
             self.filtered = {}
@@ -257,16 +258,16 @@ class GuideSeq:
                 if sample != 'control':
                     self.filtered[sample] = os.path.join(self.output_folder, 'filtered', sample + '_backgroundFiltered.txt')
                     filterBackgroundSites(self.bedtools, self.identified[sample], self.identified['control'], self.filtered[sample])
-                    logger.info('Finished background filtering for {0} sample'.format(sample))
+                    LOG.info('Finished background filtering for {0} sample'.format(sample))
 
-            logger.info('Finished filtering background sites.')
+            LOG.info('Finished filtering background sites.')
 
         except Exception as e:
-            logger.error('Error filtering background sites.')
-            logger.error(traceback.format_exc())
+            LOG.error('Error filtering background sites.')
+            LOG.error(traceback.format_exc())
 
     def visualize(self):
-        logger.info('Visualizing off-target sites')
+        LOG.info('Visualizing off-target sites')
 
         try:
             for sample in self.samples:
@@ -275,11 +276,11 @@ class GuideSeq:
                     outfile = os.path.join(self.output_folder, 'visualization', sample + '_offtargets')
                     visualizeOfftargets(infile, outfile, title=sample)
 
-            logger.info('Finished visualizing off-target sites')
+            LOG.info('Finished visualizing off-target sites')
 
         except Exception as e:
-            logger.error('Error visualizing off-target sites.')
-            logger.error(traceback.format_exc())
+            LOG.error('Error visualizing off-target sites.')
+            LOG.error(traceback.format_exc())
 
 
 def parse_args():
